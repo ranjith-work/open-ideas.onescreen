@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>OneScreen — a wall that fills itself</title>
+    <meta
+      name="description"
+      content="One computer opens a room. Everyone scans the QR. Whatever they send appears instantly on the big screen. No accounts, nothing saved."
+    />
+    <meta name="theme-color" content="#e8e4da" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/css/app.css" />
+    <script>
+      // Set before first paint, so the page never flashes the wrong theme.
+      // The home and phone pages follow the device. The wall does not.
+      (function () {
+        try {
+          var saved = localStorage.getItem('onescreen.theme');
+          var dark = saved
+            ? saved === 'dark'
+            : window.matchMedia('(prefers-color-scheme: dark)').matches;
+          document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        } catch (e) {
+          /* storage blocked; the light default stands */
+        }
+      })();
+    </script>
+  </head>
+  <body class="page-home">
+    <div class="shell grain">
+      <header class="topbar">
+        <span class="wordmark">OneScreen</span>
+        <span class="topbar-note">runs on your machine · nothing saved</span>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">A temporary wall for a room full of people</p>
+            <h1 class="hero-title">A wall that<br />fills itself.</h1>
+            <p class="standfirst">
+              One computer opens a room. Everyone in the space scans the QR. A photo, a link, a
+              scribble, a single emoji — whatever they send lands on the big screen the moment they
+              send it.
+            </p>
+
+            <div class="actions">
+              <button class="btn btn-solid btn-lg" id="openRoom">Open a room</button>
+
+              <form class="join-form" id="joinForm" autocomplete="off">
+                <label class="field-label" for="joinCode">or join one</label>
+                <div class="join-row">
+                  <input
+                    id="joinCode"
+                    class="code-input"
+                    inputmode="text"
+                    autocapitalize="characters"
+                    spellcheck="false"
+                    maxlength="5"
+                    placeholder="CODE"
+                    aria-label="Room code"
+                  />
+                  <button class="btn" type="submit">Go</button>
+                </div>
+                <p class="field-error" id="joinHint" role="status"></p>
+              </form>
+            </div>
+          </div>
+
+          <!-- What the board looks like, rather than a description of it. -->
+          <div class="hero-art" aria-hidden="true">
+            <div class="chip chip-a">
+              <span class="pin"></span>
+              <p>Ship it Thursday. I'll write the release note.</p>
+              <span class="chip-by">Amber Otter · 10:24</span>
+            </div>
+            <div class="chip chip-b">
+              <span class="pin"></span>
+              <div class="chip-emoji">🎉</div>
+              <span class="chip-by">Plucky Ibex</span>
+            </div>
+            <div class="chip chip-c">
+              <span class="pin"></span>
+              <div class="chip-photo"></div>
+              <span class="chip-by">Sunny Marmot</span>            </div>
+          </div>
+        </section>
+
+        <section class="run">
+          <h2 class="section-label">How a room goes</h2>
+          <ol class="run-list">
+            <li>
+              <span class="run-n">01</span>
+              <p><b>Open a room</b> on the computer driving the projector or the TV.</p>
+            </li>
+            <li>
+              <span class="run-n">02</span>
+              <p>
+                <b>Show the QR.</b> It sits at full size on the left until you hide it
+                with <kbd>Q</kbd>.
+              </p>
+            </li>            <li>
+              <span class="run-n">03</span>
+              <p>
+                <b>Everyone sends.</b> Text, photos, links, drawings, emoji. Each arrival gets a few
+                seconds at full size, then settles onto the board.
+              </p>
+            </li>
+            <li>
+              <span class="run-n">04</span>
+              <p><b>Clear it</b> for a fresh wall, or just close the tab and walk away.</p>
+            </li>
+          </ol>
+
+          <div class="notes">
+            <div class="note">
+              <div class="note-k">No accounts</div>
+              <p>Nobody signs up and nobody installs anything. The QR is the whole onboarding.</p>
+            </div>
+            <div class="note">
+              <div class="note-k">Nothing saved</div>
+              <p>Rooms live in memory. Stop the server and the wall is genuinely gone.</p>
+            </div>
+            <div class="note">
+              <div class="note-k">Same Wi-Fi</div>
+              <p>It runs here. Phones reach it over the local network, with no cloud in between.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="foot">
+        <p id="netHint"></p>
+      </footer>
+    </div>
+
+    <script type="module" src="/js/home.js"></script>
+  </body>
+</html>

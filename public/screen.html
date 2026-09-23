@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>OneScreen</title>
+    <meta name="theme-color" content="#e8e4da" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/css/app.css" />
+    <script>
+      // The wall is lit for the room it is in, not for the laptop driving it,
+      // so it ignores the machine's dark mode and starts light. The host can
+      // drop the lights with D.
+      (function () {
+        try {
+          document.documentElement.dataset.theme =
+            localStorage.getItem('onescreen.wall-theme') === 'dark' ? 'dark' : 'light';
+        } catch (e) {
+          document.documentElement.dataset.theme = 'light';
+        }
+      })();
+    </script>
+  </head>
+  <body class="page-screen">
+    <div class="screen" id="screen">
+      <aside class="rail" id="rail">
+        <div class="rail-head">
+          <span class="wordmark small">OneScreen</span>
+        </div>
+
+        <div class="signcard">
+          <span class="pin"></span>
+          <img class="qr-img" id="qrImg" alt="QR code to join this room" />
+        </div>
+
+        <div class="rail-join">
+          <div class="label">Scan, or type this in</div>
+          <div class="join-url" id="joinUrl"></div>
+          <div class="code-big" id="codeBig">····</div>
+        </div>
+
+        <div class="rail-meta">
+          <div class="meter">
+            <span class="meter-n" id="phoneCount">0</span>
+            <span class="meter-l">here now</span>
+          </div>
+          <div class="meter">
+            <span class="meter-n" id="itemCount">0</span>
+            <span class="meter-l">on the board</span>
+          </div>
+        </div>
+
+        <div class="rail-foot">
+          <span class="conn" id="conn" data-state="connecting">connecting</span>
+          <span class="keys">
+            <span><kbd>Q</kbd> qr</span>
+            <span><kbd>D</kbd> lights</span>
+            <span><kbd>F</kbd> full</span>
+          </span>
+        </div>
+      </aside>
+
+      <section class="stage grain">
+        <header class="stage-head">
+          <h1 class="prompt" id="promptText">Send anything</h1>
+          <span class="lock-flag" id="lockPill" hidden>locked</span>
+        </header>
+
+        <div class="wall" id="wall" aria-live="polite"></div>
+
+        <div class="empty" id="empty">
+          <div class="empty-slot">
+            <span class="pin"></span>
+            <p class="empty-title">Nothing on the board yet.</p>
+            <p class="empty-sub">
+              Scan the code. The first thing anyone sends lands right here.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div class="spotlight" id="spotlight" hidden>
+        <div class="spotlight-inner" id="spotlightInner"></div>
+      </div>
+
+      <div class="bursts" id="bursts" aria-hidden="true"></div>
+
+      <div class="hostbar" id="hostbar" hidden>
+        <button class="hbtn" id="btnPrompt" title="Set the question shown on every phone">
+          Prompt
+        </button>
+        <button class="hbtn" id="btnLock" title="Stop new submissions">Lock</button>
+        <button class="hbtn" id="btnQr" title="Show or hide the QR panel">Hide QR</button>
+        <button class="hbtn" id="btnLights" title="Switch the wall for a dark room">
+          Lights down
+        </button>
+        <button class="hbtn" id="btnFull" title="Fullscreen">Full</button>
+        <button class="hbtn danger" id="btnClear" title="Take everything off the board">
+          Clear
+        </button>
+      </div>
+
+      <div class="toast" id="toast" hidden></div>
+    </div>
+
+    <script type="module" src="/js/screen.js"></script>
+  </body>
+</html>

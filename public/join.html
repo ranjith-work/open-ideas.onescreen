@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
+    />
+    <title>OneScreen — send something</title>
+    <meta name="theme-color" content="#e8e4da" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/css/app.css" />
+    <script>
+      // The phone is in somebody's hand, so it follows their device, not the
+      // wall. A dark room does not mean a dark phone, and the reverse.
+      (function () {
+        try {
+          var saved = localStorage.getItem('onescreen.theme');
+          var dark = saved
+            ? saved === 'dark'
+            : window.matchMedia('(prefers-color-scheme: dark)').matches;
+          document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        } catch (e) {
+          /* storage blocked; the light default stands */
+        }
+      })();
+    </script>
+  </head>
+  <body class="page-join">
+    <div class="phone" id="phone">
+      <header class="phone-head">
+        <div class="phone-room">
+          <span class="phone-conn" id="conn" data-state="connecting"></span>
+          <span class="phone-code" id="phoneCode">····</span>
+        </div>
+        <button class="who" id="whoBtn">
+          <span class="who-dot" id="whoDot"></span>
+          <span class="who-name" id="whoName">…</span>
+        </button>
+      </header>
+
+      <p class="phone-prompt" id="phonePrompt">Send anything to the big screen.</p>
+
+      <nav class="tabs" id="tabs" role="tablist">
+        <button class="tab is-on" data-tab="text" role="tab">Say</button>
+        <button class="tab" data-tab="photo" role="tab">Photo</button>
+        <button class="tab" data-tab="draw" role="tab">Draw</button>
+        <button class="tab" data-tab="link" role="tab">Link</button>
+        <button class="tab" data-tab="emoji" role="tab">Emoji</button>
+      </nav>
+
+      <main class="panels">
+        <!-- SAY -->
+        <section class="panel is-on" data-panel="text">
+          <textarea
+            id="textInput"
+            class="big-input"
+            rows="4"
+            maxlength="600"
+            placeholder="Type it. Hit send. It is on the wall."
+            enterkeyhint="send"
+          ></textarea>
+          <div class="row-between">
+            <span class="counter" id="textCount">0 / 600</span>
+            <button class="btn btn-solid" id="sendText">Send</button>
+          </div>
+        </section>
+
+        <!-- PHOTO -->
+        <section class="panel" data-panel="photo">
+          <div class="photo-drop" id="photoDrop">
+            <img class="photo-preview" id="photoPreview" alt="" hidden />
+            <div class="photo-empty" id="photoEmpty">
+              <div class="photo-mark" aria-hidden="true"></div>
+              <div class="photo-text">Take a photo, or pick one</div>
+              <div class="photo-sub">Shrunk on your phone before it is sent</div>
+            </div>
+          </div>
+          <div class="photo-actions">
+            <label class="btn file-btn">
+              Camera
+              <input type="file" id="photoCamera" accept="image/*" capture="environment" hidden />
+            </label>
+            <label class="btn file-btn">
+              Library
+              <input type="file" id="photoLibrary" accept="image/*" hidden />
+            </label>
+          </div>
+          <input
+            id="photoCaption"
+            class="line-input"
+            maxlength="140"
+            placeholder="Caption (optional)"
+          />
+          <button class="btn btn-solid btn-wide" id="sendPhoto" disabled>Send photo</button>
+        </section>
+
+        <!-- DRAW -->
+        <section class="panel" data-panel="draw">
+          <div class="canvas-wrap">
+            <canvas id="pad" class="pad"></canvas>
+          </div>
+          <div class="pens" id="pens"></div>
+          <div class="draw-actions">
+            <button class="btn" id="undoDraw">Undo</button>
+            <button class="btn" id="clearDraw">Clear</button>
+            <button class="btn btn-solid grow" id="sendDraw">Send drawing</button>
+          </div>
+        </section>
+
+        <!-- LINK -->
+        <section class="panel" data-panel="link">
+          <input
+            id="linkInput"
+            class="line-input"
+            type="url"
+            inputmode="url"
+            autocapitalize="off"
+            autocorrect="off"
+            spellcheck="false"
+            placeholder="paste a link"
+          />
+          <input
+            id="linkNote"
+            class="line-input"
+            maxlength="140"
+            placeholder="Why this link? (optional)"
+          />
+          <button class="btn btn-solid btn-wide" id="sendLink">Send link</button>
+          <p class="panel-note">
+            The wall fetches a title and preview picture, if the site offers one.
+          </p>
+        </section>
+
+        <!-- EMOJI -->
+        <section class="panel" data-panel="emoji">
+          <p class="panel-note">Tap to throw one across the wall. Hold to pin it up for good.</p>
+          <div class="emoji-grid" id="emojiGrid"></div>
+        </section>
+      </main>
+
+      <footer class="phone-foot">
+        <div class="sent-log" id="sentLog"></div>
+        <div class="locked-note" id="lockedNote" hidden>The host has locked the wall.</div>
+      </footer>
+
+      <div class="phone-toast" id="toast" hidden></div>
+    </div>
+
+    <dialog class="sheet" id="nameSheet">
+      <form method="dialog" class="sheet-inner" id="nameForm">
+        <h2>What should the wall call you?</h2>
+        <input
+          id="nameInput"
+          class="line-input"
+          maxlength="24"
+          placeholder="Your name"
+          autocomplete="nickname"
+        />
+        <div class="sheet-actions">
+          <button class="btn" value="cancel">Cancel</button>
+          <button class="btn btn-solid" id="nameSave" value="save">Save</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script type="module" src="/js/join.js"></script>
+  </body>
+</html>
