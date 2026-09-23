@@ -192,7 +192,9 @@ export async function saveBoardPdf({ items, code, prompt = '' }) {
     timeStyle: 'short',
   });
 
-  const win = window.open('', '_blank', 'noopener,noreferrer');
+  // Do not pass "noopener" in the features string — browsers then return null
+  // for the window handle, and we cannot call print().
+  const win = window.open('about:blank', '_blank');
   if (!win) {
     throw new Error('Pop-up blocked — allow pop-ups for this site to save the board.');
   }
