@@ -82,6 +82,7 @@ bottom of the screen and fades until you reach for it.
 | Hide QR | `Q` | Drop the QR panel and give the board the whole screen. |
 | Lights | `D` | Switch the board between a lit room and a dark one. |
 | Fullscreen | `F` | Standard fullscreen. |
+| Save PDF | `S` | Open a print view of everything on the board — choose Save as PDF. No viewport crop; every tile is included. |
 | Clear | | Take everything off the board. Asks first. |
 | Delete one | | Hover any tile and click the ×. |
 

@@ -1,5 +1,6 @@
 import { $, el, clockTime, codeFromPath, makeToast, hostTokenFor } from './util.js';
 import { connect } from './bus.js';
+import { saveBoardPdf } from './board-pdf.js';
 
 const CODE = codeFromPath();
 
@@ -555,6 +556,17 @@ $('#btnLock').addEventListener('click', () =>
 $('#btnQr').addEventListener('click', () => toggleQr());
 $('#btnLights').addEventListener('click', toggleLights);
 $('#btnFull').addEventListener('click', toggleFullscreen);
+$('#btnPdf').addEventListener('click', () => {
+  if (!isHost) return;
+  if (!items.size) return toast('Nothing on the board to save.');
+  toast('Choose “Save as PDF” in the print dialog…');
+  saveBoardPdf({
+    items: items.values(),
+    code: CODE,
+    prompt: promptText.textContent.trim(),
+  }).catch((err) => toast(err?.message || 'Could not open the PDF view.', 'bad'));
+  return undefined;
+});
 $('#btnClear').addEventListener('click', () => {
   if (!items.size) return toast('Nothing to clear.');
   if (confirm(`Take all ${items.size} things off the board?`)) {
@@ -587,6 +599,9 @@ document.addEventListener('keydown', (event) => {
       break;
     case 'l':
       if (isHost) bus.send({ t: 'host', action: 'lock', value: !locked });
+      break;
+    case 's':
+      if (isHost) $('#btnPdf').click();
       break;
     case 'escape':
       spotQueue.length = 0;
