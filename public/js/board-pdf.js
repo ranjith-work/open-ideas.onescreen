@@ -219,7 +219,11 @@ export async function saveBoardPdf({ items, code, prompt = '' }) {
       }),
     ])
   );
-  doc.body.append(el(doc, 'h1', { class: 'prompt', text: prompt || 'Send anything' }));
+
+  const promptText = String(prompt || '').trim();
+  if (promptText && promptText !== 'Send anything') {
+    doc.body.append(el(doc, 'h1', { class: 'prompt', text: promptText }));
+  }
 
   if (!list.length) {
     doc.body.append(el(doc, 'p', { class: 'empty', text: 'Nothing was on the board.' }));
