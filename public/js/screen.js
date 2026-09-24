@@ -102,8 +102,6 @@ function tileFoot(item) {
 function imageNode(item) {
   const img = el('img', { class: 'tile-img', src: item.src, alt: item.caption || '' });
   if (item.w && item.h) img.style.aspectRatio = `${item.w} / ${item.h}`;
-  // A late-loading image changes column heights, so re-measure once it lands.
-  img.addEventListener('load', () => trimOverflow(), { once: true });
   img.addEventListener('error', () => img.remove(), { once: true });
   return img;
 }
@@ -144,9 +142,7 @@ function renderTile(item, { spotlit = false } = {}) {
             referrerpolicy: 'no-referrer',
             onerror(event) {
               event.currentTarget.remove();
-              trimOverflow();
             },
-            onload: () => trimOverflow(),
           })
         );
       }
@@ -190,8 +186,8 @@ function renderTile(item, { spotlit = false } = {}) {
 }
 
 // ---------------------------------------------------------------------------
-// Layout: fixed-height columns, newest at the top, oldest pushed off the
-// bottom. A board on a projector should never show a scrollbar.
+// Layout: masonry columns, newest at the top. The wall scrolls when the
+// board is taller than the stage so tall photos never trap older work.
 // ---------------------------------------------------------------------------
 
 function columnCount() {
@@ -212,76 +208,24 @@ function buildColumns() {
   return true;
 }
 
-function availableHeight() {
-  const cs = getComputedStyle(wall);
-  return wall.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
-}
-
 function shortestColumn() {
   let best = columns[0];
   for (const col of columns) if (col.offsetHeight < best.offsetHeight) best = col;
   return best;
 }
 
-function trimOverflow() {
-  const limit = availableHeight();
-  if (limit <= 0) return;
-  for (const col of columns) {
-    let guard = 0;
-    while (col.offsetHeight > limit && col.children.length > 1 && guard < 200) {
-      col.lastElementChild.remove();
-      guard += 1;
-    }
-  }
-}
-
 function placeNewest(item) {
   if (!columns.length) buildColumns();
   shortestColumn().prepend(renderTile(item));
-  trimOverflow();
-}
-
-/**
- * Put a tile in the shortest column that still has room for it.
- *
- * Simply taking the shortest column is not enough: one tall photo makes its
- * column the tallest forever, so everything else piles into the remaining
- * columns until they overflow and get trimmed, while the photo's column sits
- * there with visible empty space. Trying each column shortest-first and
- * keeping the tile only where it actually fits uses the whole board.
- *
- * Returning false means the board is genuinely full and older work stays off.
- */
-function fitOntoBoard(item, limit) {
-  const tile = renderTile(item);
-  const byHeight = [...columns].sort((a, b) => a.offsetHeight - b.offsetHeight);
-  for (const col of byHeight) {
-    const wasEmpty = col.children.length === 0;
-    col.append(tile);
-    // A tile taller than the whole board still goes up; better clipped than absent.
-    if (wasEmpty || limit <= 0 || col.offsetHeight <= limit) return true;
-    tile.remove();
-  }
-  return false;
-}
-
-/** True once there is no meaningful room left anywhere on the board. */
-function boardIsFull(limit) {
-  if (limit <= 0) return false;
-  return columns.every((col) => col.offsetHeight >= limit - 60);
 }
 
 function relayout() {
   buildColumns();
   for (const col of columns) col.replaceChildren();
-  const limit = availableHeight();
+  // Newest first into the shortest column keeps the board balanced as it grows.
   for (const item of Array.from(items.values()).reverse()) {
-    if (boardIsFull(limit)) break;
-    // One oversized photo must not strand every smaller item behind it, so a
-    // tile that will not fit is skipped rather than ending the layout.
-    fitOntoBoard(item, limit);
+    shortestColumn().append(renderTile(item));
   }
-  trimOverflow();
   refreshCounts();
 }
 
@@ -430,7 +374,6 @@ const bus = connect({
         items.set(msg.item.id, msg.item);
         const existing = wall.querySelector(`[data-id="${CSS.escape(msg.item.id)}"]`);
         if (existing) existing.replaceWith(renderTile(msg.item));
-        trimOverflow();
         if (ready && isFresh && msg.item.kind === 'url') queueSpotlight(msg.item, true);
         break;
       }

@@ -20,8 +20,8 @@ Open the address it prints, click **Open a room**, and point phones at the QR.
 A meeting where you want everyone's answer at once instead of going round the
 table. A classroom where thirty students each submit a photo of their work. A
 party where the wall fills up with whatever people are looking at. The point is
-not the content, which anything can generate. The point is twenty phones and
-one screen in the same room at the same moment.
+not the content, which anything can generate. The point is every phone in the
+room and one screen, at the same moment.
 
 ## Design
 
@@ -45,10 +45,8 @@ pin to it. The interface is built from that rather than from a dashboard.
   laptop's dark mode, because the right setting depends on the room the
   projector is lit for. The phone follows its owner's device, because it is in
   somebody's hand.
-- **The board never scrolls.** Newest work is at the top, oldest falls off the
-  bottom, and a tile is placed in the shortest column that still has room for
-  it rather than simply the shortest one, so a single tall photo does not leave
-  a column of empty space.
+- **The board scrolls when it needs to.** Newest work is at the top. Tall
+  photos and a full wall stay reachable instead of being clipped off.
 
 ## How a room works
 
@@ -56,8 +54,8 @@ pin to it. The interface is built from that rather than from a dashboard.
 2. Phones scan the QR, which lands them on a send page. No sign-in, no app.
 3. Anything submitted broadcasts to every connected device instantly. The big
    screen shows it full size for a few seconds, then it settles into the wall.
-4. The board never scrolls. Newest work sits at the top, oldest falls off the
-   bottom, so the screen is always showing the current moment.
+4. The board scrolls when content is taller than the screen. Newest work sits
+   at the top.
 5. Close the server and the room is gone. That is the whole data policy.
 
 ## What a phone can send

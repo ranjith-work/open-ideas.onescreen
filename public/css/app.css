@@ -827,8 +827,11 @@ kbd {
   display: flex;
   gap: 20px;
   padding: 24px 34px 86px;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   align-items: flex-start;
+  scrollbar-gutter: stable;
 }
 
 .wall-col {
